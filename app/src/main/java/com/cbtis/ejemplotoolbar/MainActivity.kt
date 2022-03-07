@@ -7,13 +7,16 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+//import android.view.ShareActionProvider
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.ShareActionProvider
 import androidx.appcompat.widget.Toolbar
+
+import androidx.core.view.MenuItemCompat
 
 
 class MainActivity : AppCompatActivity() {
-
     var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +43,12 @@ class MainActivity : AppCompatActivity() {
         val itemBusqueda = menu?.findItem(R.id.busqueda)
         var vistaBusqueda = itemBusqueda?.actionView as SearchView
 
+        val itemCompartir = menu?.findItem(R.id.share)
+        val shareActionProvider = MenuItemCompat.getActionProvider(itemCompartir) as ShareActionProvider
+        compartirIntent(shareActionProvider)
+
+
+
         vistaBusqueda.queryHint = "Escribe tu nombre..."
 
         vistaBusqueda.setOnQueryTextFocusChangeListener{v, hasFocus ->
@@ -47,22 +56,22 @@ class MainActivity : AppCompatActivity() {
             Log.d("LISTENERFOCUS", hasFocus.toString())
         }
 
-           vistaBusqueda.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        vistaBusqueda.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 
-               override fun onQueryTextChange(newText: String?): Boolean {
-                   if (newText != null) {
-                       Log.d("OnQueryTextChange", newText)
-                   }
-                   return true
-               }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    Log.d("OnQueryTextChange", newText)
+                }
+                return true
+            }
 
-               override fun onQueryTextSubmit(query: String?): Boolean {
-                   if (query != null) {
-                       Log.d("OnQueryTextSubmit", query)
-                   }
-                   return true
-               }
-           })
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    Log.d("OnQueryTextSubmit", query)
+                }
+                return true
+            }
+        })
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -74,6 +83,18 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             else ->{return super.onOptionsItemSelected(item) }
+        }
+
+    }
+
+
+    private  fun compartirIntent(shareActionProvider: ShareActionProvider){
+        if (shareActionProvider != null){
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, "Este es un mensaje compartido")
+
+            shareActionProvider.setShareIntent(intent)
         }
 
     }
